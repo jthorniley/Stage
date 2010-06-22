@@ -458,7 +458,6 @@ int StgDriver::Setup()
 {
   puts("stage driver setup");
   world->Start();
-  world->Update();
   return(0);
 }
 
