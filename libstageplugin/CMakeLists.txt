@@ -27,7 +27,7 @@ target_link_libraries( stageplugin
 		       stage
 		       ${PLAYER_LIBRARIES}
 		       ${OPENGL_LIBRARIES}
-					 ${GLIBMM_LIBRARIES}
+		       ${GLIBMM_LIBRARIES}
 
 )
 
