@@ -458,6 +458,7 @@ int StgDriver::Setup()
 {
   puts("stage driver setup");
   world->Start();
+  world->Update();
   return(0);
 }
 
@@ -577,9 +578,10 @@ void StgDriver::Update(void)
 			switch( interface->addr.interf )
 				{
 				case PLAYER_SIMULATION_CODE:
-				  // one round of FLTK's update loop.
-            //Fl::wait();
-          world->Update();
+					// one round of FLTK's update loop.
+					//Fl::wait();
+					usleep(world->sim_interval);
+					world->Update();
 					break;
 					
 				default:
