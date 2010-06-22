@@ -78,6 +78,8 @@ include(FindPkgConfig)
 
 MESSAGE( STATUS "Checking for required libraries..." )
 
+pkg_check_modules( GLIBMM glibmm-2.4 )
+
 SET( INDENT "  * " )
 
 pkg_search_module( LIBPNG REQUIRED libpng )

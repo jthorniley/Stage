@@ -1,7 +1,7 @@
 MESSAGE( STATUS "Configuring libstageplugin" )
 
-link_directories( ${PLAYER_LIBRARY_DIRS} )
-include_directories( ${PLAYER_INCLUDE_DIRS} )
+link_directories( ${PLAYER_LIBRARY_DIRS} ${GLIBMM_LIBRARY_DIRS} )
+include_directories( ${PLAYER_INCLUDE_DIRS} ${GLIBMM_INCLUDE_DIRS} )
 
 set( stagepluginSrcs 
 	     p_driver.h
@@ -27,6 +27,7 @@ target_link_libraries( stageplugin
 		       stage
 		       ${PLAYER_LIBRARIES}
 		       ${OPENGL_LIBRARIES}
+					 ${GLIBMM_LIBRARIES}
 
 )
 

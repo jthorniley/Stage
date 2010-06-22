@@ -72,7 +72,8 @@ InterfaceSimulation::InterfaceSimulation( player_devaddr_t addr,
 		ConfigFile* cf,
 		int section )
 : Interface( addr, driver, cf, section ),
-    gui_disable(0)
+    gui_disable(0),
+    glib_loop()
 {
 	printf( "a Stage world" ); fflush(stdout);
 	//puts( "InterfaceSimulation constructor" );
@@ -128,6 +129,19 @@ InterfaceSimulation::InterfaceSimulation( player_devaddr_t addr,
 
 	puts("");
 	StgDriver::world->Load( fullname );
+	if ( gui_disable )
+	{
+		// If the FLTK gui is not being used, create a glib event loop to
+		// update the simulation instead
+		glib_loop = Glib::MainLoop::create();
+
+		sigc::slot<bool> timer_slot =
+			sigc::bind_return(
+			sigc::mem_fun(*StgDriver::world, &World::Update), true );
+
+		glib_loop->get_context()->signal_timeout().connect( timer_slot, StgDriver::world->sim_interval/1e3 );
+
+	} 
 	//printf( " done.\n" );
 
 	// poke the P/S name into the window title bar
@@ -453,12 +467,11 @@ int InterfaceSimulation::ProcessMessage(QueuePointer &resp_queue,
 	}
 }
 
-void InterfaceSimulation::Update() 
+void InterfaceSimulation::Wait() 
 {
 	if ( gui_disable ) 
 	{
-		usleep(StgDriver::world->sim_interval);
-		StgDriver::world->Update();
+		glib_loop->get_context()->iteration(false);
 	}
 	else
 	{

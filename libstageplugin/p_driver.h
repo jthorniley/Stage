@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <math.h>
+#include <glibmm.h>
 
 #include <libplayercore/playercore.h>
 
@@ -91,9 +92,10 @@ class InterfaceSimulation : public Interface
                              player_msghdr_t* hdr,
                              void* data);
 
-  void Update();
+  void Wait();
  private:
   unsigned int gui_disable;
+  Glib::RefPtr< Glib::MainLoop > glib_loop;
 };
 
 // base class for all interfaces that are associated with a model

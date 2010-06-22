@@ -578,7 +578,7 @@ void StgDriver::Update(void)
 				{
 				case PLAYER_SIMULATION_CODE:
 						// one round of FLTK's update loop.
-						((InterfaceSimulation*)interface)->Update();
+						((InterfaceSimulation*)interface)->Wait();
 						break;
 
 				default:
