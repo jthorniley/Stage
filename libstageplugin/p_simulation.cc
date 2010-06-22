@@ -71,7 +71,8 @@ InterfaceSimulation::InterfaceSimulation( player_devaddr_t addr,
 		StgDriver* driver,
 		ConfigFile* cf,
 		int section )
-: Interface( addr, driver, cf, section )
+: Interface( addr, driver, cf, section ),
+    gui_disable(0)
 {
 	printf( "a Stage world" ); fflush(stdout);
 	//puts( "InterfaceSimulation constructor" );
@@ -114,7 +115,15 @@ InterfaceSimulation::InterfaceSimulation( player_devaddr_t addr,
 	// worldfile
 
 	// if the initial size is to large this crashes on some systems
-	StgDriver::world = new World( "Player/Stage" );
+	gui_disable = cf->ReadInt( section, "gui_disable", 0 );
+	if ( gui_disable ) 
+	{
+		StgDriver::world = new World( "Player/Stage" );
+	} 
+	else 
+	{
+		StgDriver::world = new WorldGui( 400, 300, "Player/Stage" );
+	}
 	assert(StgDriver::world);
 
 	puts("");
@@ -441,5 +450,18 @@ int InterfaceSimulation::ProcessMessage(QueuePointer &resp_queue,
 		PRINT_WARN2( "stg_simulation doesn't support msg with type/subtype %d/%d",
 				hdr->type, hdr->subtype);
 		return(-1);
+	}
+}
+
+void InterfaceSimulation::Update() 
+{
+	if ( gui_disable ) 
+	{
+		usleep(StgDriver::world->sim_interval);
+		StgDriver::world->Update();
+	}
+	else
+	{
+		Fl::wait();
 	}
 }

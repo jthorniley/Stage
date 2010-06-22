@@ -578,12 +578,10 @@ void StgDriver::Update(void)
 			switch( interface->addr.interf )
 				{
 				case PLAYER_SIMULATION_CODE:
-					// one round of FLTK's update loop.
-					//Fl::wait();
-					usleep(world->sim_interval);
-					world->Update();
-					break;
-					
+						// one round of FLTK's update loop.
+						((InterfaceSimulation*)interface)->Update();
+						break;
+
 				default:
 					{
 						// Has enough time elapsed since the last time we published on this

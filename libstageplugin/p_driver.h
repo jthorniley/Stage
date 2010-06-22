@@ -90,6 +90,10 @@ class InterfaceSimulation : public Interface
   virtual int ProcessMessage(QueuePointer & resp_queue,
                              player_msghdr_t* hdr,
                              void* data);
+
+  void Update();
+ private:
+  unsigned int gui_disable;
 };
 
 // base class for all interfaces that are associated with a model
