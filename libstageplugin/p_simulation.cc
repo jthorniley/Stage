@@ -72,8 +72,10 @@ InterfaceSimulation::InterfaceSimulation( player_devaddr_t addr,
 		ConfigFile* cf,
 		int section )
 : Interface( addr, driver, cf, section ),
-    gui_disable(0),
-    glib_loop()
+#ifdef GLIBMM_FOUND
+    glib_loop(),
+#endif
+    gui_disable(0)
 {
 	printf( "a Stage world" ); fflush(stdout);
 	//puts( "InterfaceSimulation constructor" );
@@ -119,7 +121,15 @@ InterfaceSimulation::InterfaceSimulation( player_devaddr_t addr,
 	gui_disable = cf->ReadInt( section, "gui_disable", 0 );
 	if ( gui_disable ) 
 	{
+#ifdef GLIBMM_FOUND
 		StgDriver::world = new World( "Player/Stage" );
+#else
+		PRINT_WARN( "gui_disable set, but libstageplugin was not compiled with glibmm" );
+		PRINT_WARN( "For correct behaviour, recompile stage with glibmm. Will now attempt" );
+		PRINT_WARN( "to run with GUI" );
+		StgDriver::world = new WorldGui( 400, 300, "Player/Stage" );
+#endif
+
 	} 
 	else 
 	{
@@ -129,6 +139,7 @@ InterfaceSimulation::InterfaceSimulation( player_devaddr_t addr,
 
 	puts("");
 	StgDriver::world->Load( fullname );
+#ifdef GLIBMM_FOUND
 	if ( gui_disable )
 	{
 		// If the FLTK gui is not being used, create a glib event loop to
@@ -140,8 +151,8 @@ InterfaceSimulation::InterfaceSimulation( player_devaddr_t addr,
 			sigc::mem_fun(*StgDriver::world, &World::Update), true );
 
 		glib_loop->get_context()->signal_timeout().connect( timer_slot, StgDriver::world->sim_interval/1e3 );
-
 	} 
+#endif
 	//printf( " done.\n" );
 
 	// poke the P/S name into the window title bar
@@ -469,6 +480,7 @@ int InterfaceSimulation::ProcessMessage(QueuePointer &resp_queue,
 
 void InterfaceSimulation::Wait() 
 {
+#ifdef GLIBMM_FOUND
 	if ( gui_disable ) 
 	{
 		glib_loop->get_context()->iteration(false);
@@ -477,4 +489,7 @@ void InterfaceSimulation::Wait()
 	{
 		Fl::wait();
 	}
+#else
+	Fl::wait();
+#endif
 }

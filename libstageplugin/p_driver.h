@@ -4,7 +4,11 @@
 #include <unistd.h>
 #include <string.h>
 #include <math.h>
+
+#include "../config.h"
+#ifdef GLIBMM_FOUND
 #include <glibmm.h>
+#endif
 
 #include <libplayercore/playercore.h>
 
@@ -94,8 +98,12 @@ class InterfaceSimulation : public Interface
 
   void Wait();
  private:
-  unsigned int gui_disable;
+
+#ifdef GLIBMM_FOUND
   Glib::RefPtr< Glib::MainLoop > glib_loop;
+#endif
+
+  unsigned int gui_disable;
 };
 
 // base class for all interfaces that are associated with a model
